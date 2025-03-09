@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramadan Reading Tracker 2025</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1d4ed8;
+            --secondary-color: #4338ca;
+            --accent-color: #7c3aed;
+            --background-color: #f8fafc;
+            --surface-color: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --success-color: #10b981;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: var(--surface-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .search-section {
+            background-color: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-container input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .search-container input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        .search-container button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .search-container button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .search-container button i {
+            margin-right: 8px;
+        }
+
+        .search-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .search-options button {
+            background-color: #e2e8f0;
+            border: none;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-secondary);
+        }
+
+        .search-options button:hover {
+            background-color: #cbd5e1;
+        }
+
+        .results-section {
+            background-color: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .results-header h2 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+
+        .results-header .results-count {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .results-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .result-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background-color: #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        .result-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .result-date {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .date-gregorian {
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .date-hijri {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .result-pages {
+            font-weight: bold;
+            color: var(--accent-color);
+            font-size: 18px;
+            background-color: #ede9fe;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .empty-results {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-results i {
+            font-size: 3rem;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .day-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stats-section {
+            display: flex;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .stat-card {
+            flex: 1;
+            background-color: #f1f5f9;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+
+            .search-container {
+                flex-direction: column;
+            }
+
+            .stats-section {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Jom Khatam Ramai² 2025</h1>
+            <p>Ramadan Reading Page Assignment Tracker</p>
+        </header>
+
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Enter your name..." aria-label="Search by name">
+                <button id="searchButton"><i class="fas fa-search"></i> Search</button>
+            </div>
+            <div class="search-options">
+                <button data-name="Mak">Mak</button>
+                <button data-name="Bapak">Bapak</button>
+                <button data-name="FaisalFatih">FaisalFatih</button>
+                <button data-name="HasanahHusnaHuda">HasanahHusnaHuda</button>
+                <button data-name="Nadiah">Nadiah</button>
+                <button data-name="Azhar">Azhar</button>
+                <button data-name="Faizah">Faizah</button>
+                <button data-name="Syasya">Syasya</button>
+                <button data-name="Azrul">Azrul</button>
+                <button data-name="Fadhilah">Fadhilah</button>
+                <button data-name="AlyaAsyraf (A²)">AlyaAsyraf (A²)</button>
+            </div>
+        </div>
+
+        <div class="results-section">
+            <div id="results-content">
+                <div class="empty-results">
+                    <i class="fas fa-search"></i>
+                    <p>Enter a name to see reading assignments</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Reading schedule data
+        const readingScheduleData = [
+            // March 8, 2025
+            { date: "2025-03-08", hijriDate: "7 Ramadhan 1446H", dayOfWeek: "Saturday", person: "Mak", startPage: 134, endPage: 135 },
+            { date: "2025-03-08", hijriDate: "7 Ramadhan 1446H", dayOfWeek: "Saturday", person: "Bapak", startPage: 136, endPage: 137 },
+            { date: "2025-03-08", hijriDate: "7 Ramadhan 1446H", dayOfWeek: "Saturday", person: "FaisalFatih", startPage: 138, endPage: 139 },
+            { date: "2025-03-08", hijriDate: "7 Ramadhan 1446H", dayOfWeek: "Saturday", person: "HasanahHusnaHuda", startPage: 140, endPage: 141 },
+            { date: "2025-03-08", hijriDate: "7 Ramadhan 1446H", dayOfWeek: "Saturday", person: "Nadiah", startPage: 142, endPage: 143 },
+            { date: "2025-03-08", hijriDate: "7 Ramadhan 1446H", dayOfWeek: "Saturday", person: "Azhar", startPage: 144, endPage: 145 },
+            { date: "2025-03-08", hijriDate: "7 Ramadhan 1446H", dayOfWeek: "Saturday", person: "Faizah", startPage: 146, endPage: 147 },
+            { date: "2025-03-08", hijriDate: "7 Ramadhan 1446H", dayOfWeek: "Saturday", person: "Syasya", startPage: 148, endPage: 149 },
+            { date: "2025-03-08", hijriDate: "7 Ramadhan 1446H", dayOfWeek: "Saturday", person: "Azrul", startPage: 150, endPage: 151 },
+            { date: "2025-03-08", hijriDate: "7 Ramadhan 1446H", dayOfWeek: "Saturday", person: "Fadhilah", startPage: 152, endPage: 153 },
+            { date: "2025-03-08", hijriDate: "7 Ramadhan 1446H", dayOfWeek: "Saturday", person: "AlyaAsyraf (A²)", startPage: 154, endPage: 155 },
+            
+            // March 9, 2025
+            { date: "2025-03-09", hijriDate: "8 Ramadhan 1446H", dayOfWeek: "Sunday", person: "Mak", startPage: 156, endPage: 157 },
+            { date: "2025-03-09", hijriDate: "8 Ramadhan 1446H", dayOfWeek: "Sunday", person: "Bapak", startPage: 158, endPage: 159 },
+            { date: "2025-03-09", hijriDate: "8 Ramadhan 1446H", dayOfWeek: "Sunday", person: "FaisalFatih", startPage: 160, endPage: 161 },
+            { date: "2025-03-09", hijriDate: "8 Ramadhan 1446H", dayOfWeek: "Sunday", person: "HasanahHusnaHuda", startPage: 162, endPage: 163 },
+            { date: "2025-03-09", hijriDate: "8 Ramadhan 1446H", dayOfWeek: "Sunday", person: "Nadiah", startPage: 164, endPage: 165 },
+            { date: "2025-03-09", hijriDate: "8 Ramadhan 1446H", dayOfWeek: "Sunday", person: "Azhar", startPage: 166, endPage: 167 },
+            { date: "2025-03-09", hijriDate: "8 Ramadhan 1446H", dayOfWeek: "Sunday", person: "Faizah", startPage: 168, endPage: 169 },
+            { date: "2025-03-09", hijriDate: "8 Ramadhan 1446H", dayOfWeek: "Sunday", person: "Syasya", startPage: 170, endPage: 171 },
+            { date: "2025-03-09", hijriDate: "8 Ramadhan 1446H", dayOfWeek: "Sunday", person: "Azrul", startPage: 172, endPage: 173 },
+            { date: "2025-03-09", hijriDate: "8 Ramadhan 1446H", dayOfWeek: "Sunday", person: "Fadhilah", startPage: 174, endPage: 175 },
+            { date: "2025-03-09", hijriDate: "8 Ramadhan 1446H", dayOfWeek: "Sunday", person: "AlyaAsyraf (A²)", startPage: 176, endPage: 177 },
+
+            // March 10, 2025
+            { date: "2025-03-10", hijriDate: "9 Ramadhan 1446H", dayOfWeek: "Monday", person: "Mak", startPage: 178, endPage: 179 },
+            { date: "2025-03-10", hijriDate: "9 Ramadhan 1446H", dayOfWeek: "Monday", person: "Bapak", startPage: 180, endPage: 181 },
+            { date: "2025-03-10", hijriDate: "9 Ramadhan 1446H", dayOfWeek: "Monday", person: "FaisalFatih", startPage: 182, endPage: 183 },
+            { date: "2025-03-10", hijriDate: "9 Ramadhan 1446H", dayOfWeek: "Monday", person: "HasanahHusnaHuda", startPage: 184, endPage: 185 },
+            { date: "2025-03-10", hijriDate: "9 Ramadhan 1446H", dayOfWeek: "Monday", person: "Nadiah", startPage: 186, endPage: 187 },
+            { date: "2025-03-10", hijriDate: "9 Ramadhan 1446H", dayOfWeek: "Monday", person: "Azhar", startPage: 188, endPage: 189 },
+            { date: "2025-03-10", hijriDate: "9 Ramadhan 1446H", dayOfWeek: "Monday", person: "Faizah", startPage: 190, endPage: 191 },
+            { date: "2025-03-10", hijriDate: "9 Ramadhan 1446H", dayOfWeek: "Monday", person: "Syasya", startPage: 192, endPage: 193 },
+            { date: "2025-03-10", hijriDate: "9 Ramadhan 1446H", dayOfWeek: "Monday", person: "Azrul", startPage: 194, endPage: 195 },
+            { date: "2025-03-10", hijriDate: "9 Ramadhan 1446H", dayOfWeek: "Monday", person: "Fadhilah", startPage: 196, endPage: 197 },
+            { date: "2025-03-10", hijriDate: "9 Ramadhan 1446H", dayOfWeek: "Monday", person: "AlyaAsyraf (A²)", startPage: 198, endPage: 199 },
+
+            // Continue with more data here...
+            // Generated until March 30, 2025 following the pattern
+            // Each day, pages increase by +2 per person
+
+            // March 11, 2025
+            { date: "2025-03-11", hijriDate: "10 Ramadhan 1446H", dayOfWeek: "Tuesday", person: "Mak", startPage: 200, endPage: 201 },
+            { date: "2025-03-11", hijriDate: "10 Ramadhan 1446H", dayOfWeek: "Tuesday", person: "Bapak", startPage: 202, endPage: 203 },
+            { date: "2025-03-11", hijriDate: "10 Ramadhan 1446H", dayOfWeek: "Tuesday", person: "FaisalFatih", startPage: 204, endPage: 205 },
+            { date: "2025-03-11", hijriDate: "10 Ramadhan 1446H", dayOfWeek: "Tuesday", person: "HasanahHusnaHuda", startPage: 206, endPage: 207 },
+            { date: "2025-03-11", hijriDate: "10 Ramadhan 1446H", dayOfWeek: "Tuesday", person: "Nadiah", startPage: 208, endPage: 209 },
+            { date: "2025-03-11", hijriDate: "10 Ramadhan 1446H", dayOfWeek: "Tuesday", person: "Azhar", startPage: 210, endPage: 211 },
+            { date: "2025-03-11", hijriDate: "10 Ramadhan 1446H", dayOfWeek: "Tuesday", person: "Faizah", startPage: 212, endPage: 213 },
+            { date: "2025-03-11", hijriDate: "10 Ramadhan 1446H", dayOfWeek: "Tuesday", person: "Syasya", startPage: 214, endPage: 215 },
+            { date: "2025-03-11", hijriDate: "10 Ramadhan 1446H", dayOfWeek: "Tuesday", person: "Azrul", startPage: 216, endPage: 217 },
+            { date: "2025-03-11", hijriDate: "10 Ramadhan 1446H", dayOfWeek: "Tuesday", person: "Fadhilah", startPage: 218, endPage: 219 },
+            { date: "2025-03-11", hijriDate: "10 Ramadhan 1446H", dayOfWeek: "Tuesday", person: "AlyaAsyraf (A²)", startPage: 220, endPage: 221 },
+
+            // Continuing with March 12-30 (data truncated for brevity)
+            // In a full implementation, add all dates through March 30
+
+            // Add more entries for the remaining days...
+        ];
+
+        // Generate the rest of the dates programmatically
+        const startPage = 222; // Starting page for March 12
+        const personsPerDay = 11; // 11 persons each day
+        const pagesPerPerson = 2; // Each person reads 2 pages
+        
+        // List of all persons in order
+        const persons = [
+            "Mak", "Bapak", "FaisalFatih", "HasanahHusnaHuda", 
+            "Nadiah", "Azhar", "Faizah", "Syasya", 
+            "Azrul", "Fadhilah", "AlyaAsyraf (A²)"
+        ];
+        
+        // Days of the week
+        const daysOfWeek = [
+            "Sunday", "Monday", "Tuesday", "Wednesday", 
+            "Thursday", "Friday", "Saturday"
+        ];
+        
+        // Generate data for March 12-30
+        for (let day = 12; day <= 30; day++) {
+            const date = new Date(2025, 2, day); // Month is 0-indexed (2 = March)
+            const dayOfWeekIndex = date.getDay();
+            
+            // Hijri date calculation (simplified)
+            const hijriDay = day - 5; // Approximate mapping based on March 8 = 7 Ramadhan
+            const hijriDate = `${hijriDay} Ramadhan 1446H`;
+            
+            const formattedDate = `2025-03-${day.toString().padStart(2, '0')}`;
+            
+            // Calculate starting page for this day
+            const dayStartPage = startPage + (day - 12) * personsPerDay * pagesPerPerson;
+            
+            // Add entries for each person on this day
+            for (let p = 0; p < persons.length; p++) {
+                const personStartPage = dayStartPage + (p * pagesPerPerson);
+                const personEndPage = personStartPage + pagesPerPerson - 1;
+                
+                readingScheduleData.push({
+                    date: formattedDate,
+                    hijriDate,
+                    dayOfWeek: daysOfWeek[dayOfWeekIndex],
+                    person: persons[p],
+                    startPage: personStartPage,
+                    endPage: personEndPage
+                });
+            }
+        }
+
+        // DOM elements
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const resultsContent = document.getElementById('results-content');
+        const quickSearchButtons = document.querySelectorAll('.search-options button');
+
+        // Format date for display
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        // Search function
+        function searchByName(name) {
+            if (!name.trim()) {
+                resultsContent.innerHTML = `
+                    <div class="empty-results">
+                        <i class="fas fa-search"></i>
+                        <p>Enter a name to see reading assignments</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Show loading state
+            resultsContent.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Searching for assignments...</p>
+                </div>
+            `;
+
+            // Simulate a slight delay to show loading state (remove in production)
+            setTimeout(() => {
+                const normalizedInput = name.trim().toLowerCase();
+                const results = readingScheduleData.filter(item => 
+                    item.person.toLowerCase().includes(normalizedInput)
+                );
+
+                if (results.length === 0) {
+                    resultsContent.innerHTML = `
+                        <div class="empty-results">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <p>No assignments found for "${name}"</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Calculate total pages
+                const totalPages = results.reduce((sum, item) => 
+                    sum + (item.endPage - item.startPage + 1), 0
+                );
+
+                // Group by person (in case search matches multiple people)
+                const groupedByPerson = {};
+                results.forEach(item => {
+                    if (!groupedByPerson[item.person]) {
+                        groupedByPerson[item.person] = [];
+                    }
+                    groupedByPerson[item.person].push(item);
+                });
+
+                let resultsHTML = '';
+
+                // For each person found
+                Object.keys(groupedByPerson).forEach(person => {
+                    const personResults = groupedByPerson[person];
+                    const personTotalPages = personResults.reduce((sum, item) => 
+                        sum + (item.endPage - item.startPage + 1), 0
+                    );
+
+                    resultsHTML += `
+                        <div class="results-header">
+                            <h2>${person}'s Assignments</h2>
+                            <span class="results-count">${personResults.length} days</span>
+                        </div>
+                        <div class="stats-section">
+                            <div class="stat-card">
+                                <div class="stat-value">${personResults.length}</div>
+                                <div class="stat-label">Total Days</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${personTotalPages}</div>
+                                <div class="stat-label">Total Pages</div>
+                            </div>
+                        </div>
+                        <ul class="results-list">
+                    `;
+
+                    personResults.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                    personResults.forEach(item => {
+                        const gregorianDate = formatDate(item.date);
+                        resultsHTML += `
+                            <li class="result-item">
+                                <div class="result-date">
+                                    <span class="date-gregorian">${gregorianDate}</span>
+                                    <span class="date-hijri">${item.hijriDate}</span>
+                                    <span class="day-label">${item.dayOfWeek}</span>
+                                </div>
+                                <div class="result-pages">
+                                    Pages ${item.startPage}-${item.endPage}
+                                </div>
+                            </li>
+                        `;
+                    });
+
+                    resultsHTML += `</ul>`;
+                });
+
+                resultsContent.innerHTML = resultsHTML;
+            }, 500); // Simulate network delay
+        }
+
+        // Event listeners
+        searchButton.addEventListener('click', () => {
+            searchByName(searchInput.value);
+        });
+
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                searchByName(searchInput.value);
+            }
+        });
+
+        // Quick search buttons
+        quickSearchButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const name = button.getAttribute('data-name');
+                searchInput.value = name;
+                searchByName(name);
+            });
+        });
+    </script>
+</body>
+</html>
